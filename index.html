@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>EURO-TECH RAIL | Red Ferroviaria Total</title>
+    <style>
+        :root {
+            --rail-blue: #00f2ff;
+            --alert-red: #ff3c3c;
+            --safe-green: #00ff41;
+            --bg-interface: #050508;
+        }
+
+        body {
+            background-color: var(--bg-interface);
+            color: #e0e0e0;
+            font-family: 'Consolas', 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .map-container {
+            position: relative;
+            width: 95%;
+            max-width: 1100px;
+            border: 2px solid #1a1a2e;
+            background: #000;
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.1);
+        }
+
+        .map-base {
+            width: 100%;
+            display: block;
+            filter: brightness(0.5) contrast(1.1) saturate(0.6);
+        }
+
+        /* Líneas de conexión animadas */
+        .svg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .line {
+            fill: none;
+            stroke: var(--rail-blue);
+            stroke-width: 1.2;
+            stroke-dasharray: 4;
+            animation: moveLine 15s linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes moveLine {
+            from { stroke-dashoffset: 200; }
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* Marcadores de Ciudad */
+        .city-node {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 1.5px solid #fff;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .status-ok { background: var(--safe-green); box-shadow: 0 0 10px var(--safe-green); }
+        .status-warn { background: var(--alert-red); box-shadow: 0 0 15px var(--alert-red); animation: pulse 1.5s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.8; }
+        }
+
+        /* Tooltips */
+        .city-label {
+            position: absolute;
+            background: rgba(0, 10, 20, 0.9);
+            border: 1px solid var(--rail-blue);
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: #fff;
+            opacity: 0;
+            transition: 0.3s;
+            pointer-events: none;
+            z-index: 10;
+            white-space: nowrap;
+        }
+
+        .city-node:hover + .city-label {
+            opacity: 1;
+            transform: translateY(-5px);
+        }
+
+        /* Coordenadas de Ciudades (Relativas a la imagen) */
+        .madrid   { top: 70%; left: 30%; }
+        .london   { top: 38%; left: 37%; }
+        .paris    { top: 48%; left: 42%; }
+        .berlin   { top: 40%; left: 54%; } /* ALERTA */
+        .warsaw   { top: 38%; left: 64%; } /* ALERTA */
+        .rome     { top: 68%; left: 53%; }
+    </style>
+</head>
+<body>
+
+    <h2 style="color: var(--rail-blue); text-shadow: 0 0 5px var(--rail-blue);">TOPOLOGÍA DE RED - EUROPA CENTRAL</h2>
+
+    <div class="map-container">
+        <!-- Fondo: Imagen cargada anteriormente -->
+        <img src="imageneuropa.png" alt="Mapa Base Europa" class="map-base">
+
+        <!-- Conexiones Troncales (SVG) -->
+        <svg class="svg-layer" viewBox="0 0 1000 600" preserveAspectRatio="none">
+            <!-- Madrid - París -->
+            <path class="line" d="M 300 420 L 420 288" />
+            <!-- París - Londres -->
+            <path class="line" d="M 420 288 L 370 228" />
+            <!-- París - Berlín -->
+            <path class="line" d="M 420 288 L 540 240" />
+            <!-- Berlín - Varsovia -->
+            <path class="line" d="M 540 240 L 640 228" />
+            <!-- Berlín - Roma -->
+            <path class="line" d="M 540 240 L 530 408" />
+            <!-- París - Roma -->
+            <path class="line" d="M 420 288 L 530 408" />
+        </svg>
+
+        <!-- Nodos y Etiquetas -->
+        <div class="city-node status-ok madrid"></div>
+        <div class="city-label madrid">MADRID (ES): Operativo</div>
+
+        <div class="city-node status-ok london"></div>
+        <div class="city-label london">LONDRES (UK): Operativo</div>
+
+        <div class="city-node status-ok paris"></div>
+        <div class="city-label paris">PARÍS (FR): Operativo</div>
+
+        <div class="city-node status-warn berlin"></div>
+        <div class="city-label berlin">BERLÍN (DE): CONGESTIÓN</div>
+
+        <div class="city-node status-warn warsaw"></div>
+        <div class="city-label warsaw">VARSOVIA (PL): BLOQUEO</div>
+
+        <div class="city-node status-ok rome"></div>
+        <div class="city-label rome">ROMA (IT): Operativo</div>
+    </div>
+
+    <footer style="margin-top: 20px; font-size: 0.75rem; color: #444;">
+        Panel de Control v4.0 | Área de Informática | Magisterio del Tolima
+    </footer>
+
+</body>
+</html>
